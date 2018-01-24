@@ -22,7 +22,7 @@ public final class AppDataManager implements IDataManager{
     private final  IApi           mIApi;
     private final AppCache mAppCache;
 
-    public AppDataManager() {
+    private AppDataManager() {
         mIApi = Net.getInstence().create();
         mAppCache = AppCache.getInstence();
     }

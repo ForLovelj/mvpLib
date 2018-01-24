@@ -13,10 +13,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.alex.parkyun.AppContants.API_BASE_URL;
-import static com.alex.parkyun.AppContants.READ_TIME_OUT;
-import static com.alex.parkyun.AppContants.WRITE_TIME_OUT;
-
 /**
  * Created by dth
  * Des:
@@ -28,7 +24,7 @@ public class Net {
     private static Net mNet;
     private static Retrofit mRetrofit;
 
-    public Net() {
+    private Net() {
 
         OkHttpClient okHttpClient = provideOkHttpClient(new CustomInterceptor());
 

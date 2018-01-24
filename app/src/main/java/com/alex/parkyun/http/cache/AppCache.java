@@ -25,7 +25,7 @@ public class AppCache implements IAcache{
         return mAppCache;
     }
 
-    public AppCache() {
+    private AppCache() {
         mACache = ACache.get(App.getAppContext());
     }
 }

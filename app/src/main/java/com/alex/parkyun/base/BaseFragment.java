@@ -2,8 +2,6 @@ package com.alex.parkyun.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alex.parkyun.R;
+import com.alex.parkyun.http.loading.NetLoadingHelper;
 import com.alex.parkyun.utils.ToastUtils;
-import com.alex.parkyun.widget.BaseLoadingViewHelper;
 import com.alex.parkyun.widget.VaryViewHelper;
 
 import butterknife.ButterKnife;
@@ -25,13 +23,16 @@ import io.reactivex.disposables.Disposable;
  * Date: 2018-01-23.
  */
 
-public abstract class BaseFragment <T extends BasePresenter> extends Fragment implements IBaseView{
+public abstract class BaseFragment <T extends BasePresenter<V>,V extends BaseMvpView> extends Fragment implements IBaseView{
 
     private   VaryViewHelper        mVaryViewHelper;
     protected Context               mContext;
-    private   BaseLoadingViewHelper httpNetLoadingViewHelper;
     protected T                     mPresenter;
     private   Unbinder              mUnbinder;
+    private NetLoadingHelper mNetLoadingHelper;
+    protected boolean isViewInitiated;
+    protected boolean isVisibleToUser;
+    protected boolean isDataInitiated;
 
     @Override
     public void onAttach(Context context) {
@@ -47,7 +48,7 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
 
         mPresenter = getPresenter();
         if (mPresenter != null) {
-            mPresenter.attach(this);
+            mPresenter.attach((V) this);
         }
 
         return view;
@@ -57,8 +58,8 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        httpNetLoadingViewHelper = new BaseLoadingViewHelper(getActivity());
 
+        mNetLoadingHelper = new NetLoadingHelper(mContext);
         if (getStatusTargetView() != null) {
             mVaryViewHelper = new VaryViewHelper.Builder()
                     .setDataView(getStatusTargetView())//如果根部局无效，套一层父布局即可
@@ -75,6 +76,40 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
         }
 
         init(view, savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isViewInitiated = true;
+        prepareFetchData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        this.isVisibleToUser = isVisibleToUser;
+        prepareFetchData();
+    }
+
+    protected abstract void fetchData();
+
+    protected boolean prepareFetchData() {
+        return prepareFetchData(false);
+    }
+
+    /**
+     * 预留强制刷新数据
+     * @param forceUpdate true 强制刷新
+     * @return
+     */
+    private boolean prepareFetchData(boolean forceUpdate) {
+        if (isVisibleToUser && isViewInitiated && (!isDataInitiated || forceUpdate)) {
+            fetchData();
+            isDataInitiated = true;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -107,41 +142,16 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
         mPresenter.addDisposable(disposable);
     }
 
-    Handler nethandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what){
-                case 0:
-                    String text = "";
-                    if(msg.obj == null){
-                        text = getString(R.string.lib_loading);
-                    }else {
-                        text = (String) msg.obj;
-                    }
-                    httpNetLoadingViewHelper.setLoadingText(text);
-                    httpNetLoadingViewHelper.showLoadingView();
-                    break;
-                case 1:
-                    httpNetLoadingViewHelper.dismissLoadingView();
-                    break;
-                default:
-            }
-        }
-    };
 
     @Override
     public void showLoadingView(String showText){
-        Message message = Message.obtain();
-        message.what = 0;
-        message.obj = showText;
-        nethandler.sendMessage(message);
+        mNetLoadingHelper.showLoadingView(showText);
     }
 
 
     @Override
     public void dissmissLoadingView(){
-        nethandler.sendEmptyMessage(1);
+        mNetLoadingHelper.dissLoadingView();
     }
 
     @Override
@@ -176,7 +186,6 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
     @Override
     public void onStop() {
         super.onStop();
-        httpNetLoadingViewHelper.clearView();
     }
 
     @Override
@@ -184,11 +193,12 @@ public abstract class BaseFragment <T extends BasePresenter> extends Fragment im
 
         if (mVaryViewHelper != null){
             mVaryViewHelper.releaseVaryView();
+            mVaryViewHelper = null;
         }
 
-        if (nethandler != null) {
-            nethandler.removeCallbacksAndMessages(null);
-            nethandler = null;
+        if (mNetLoadingHelper != null) {
+            mNetLoadingHelper.releaseView();
+            mNetLoadingHelper = null;
         }
 
         mUnbinder.unbind();

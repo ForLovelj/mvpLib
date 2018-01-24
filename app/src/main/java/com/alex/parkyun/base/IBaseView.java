@@ -8,7 +8,7 @@ import io.reactivex.disposables.Disposable;
  * Date: 2018-01-23.
  */
 
-public interface IBaseView {
+public interface IBaseView extends BaseMvpView{
 
     /**
      * 数据页面

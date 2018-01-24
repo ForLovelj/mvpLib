@@ -1,8 +1,8 @@
 package com.alex.parkyun.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -14,12 +14,13 @@ import com.alex.parkyun.base.BaseActivity;
 import com.alex.parkyun.bean.HomeBean;
 import com.alex.parkyun.presenter.MainPresenter;
 import com.alex.parkyun.presenter.viewImpl.IMainView;
+import com.alex.parkyun.utils.SnackbarUtil;
 import com.alex.parkyun.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity<MainPresenter> implements IMainView {
+public class MainActivity extends BaseActivity<MainPresenter,IMainView> implements IMainView{
 
     @BindView(R.id.content)
     Button         mContent;
@@ -79,12 +80,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
                 break;
             case R.id.loading:
                 showLoadingView("哈哈");
-                mRoot.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        dissmissLoadingView();
-                    }
-                }, 2000);
+                mRoot.postDelayed(() -> dissmissLoadingView(), 2000);
                 break;
             case R.id.error:
                 showErrorView();
@@ -93,7 +89,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
                 showEmptyView();
                 break;
             case R.id.zxing:
-                startActivityWithAnim(new Intent(mActivity,TestActivity.class));
+                SnackbarUtil.IndefiniteSnackbar(mRoot, "hello world!", Snackbar.LENGTH_SHORT, SnackbarUtil.Info).show();
                 break;
         }
     }

@@ -81,7 +81,10 @@ public class TipDialog {
         int tempHeight = 0;
         if (dialogType == TYPE_CALL) {
             tempHeight = d.getHeight() / 7;
-        } else {
+        } else if (dialogType == TYPE_PB) {
+            tempWidth = d.getWidth() / 2;
+            tempHeight = (int) (d.getHeight() / 4.18);
+        }else {
             tempHeight = (int) (d.getHeight() / 4.18);
         }
         p.width = tempWidth;

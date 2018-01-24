@@ -9,13 +9,13 @@ import io.reactivex.disposables.Disposable;
  * Date: 2018-01-23.
  */
 
-public class BasePresenter<T extends IBaseView> {
+public class BasePresenter<V extends BaseMvpView> {
 
-    public  T                     mView;
+    protected   V                     mView;
     private CompositeDisposable mCompositeDisposable;
 
 
-    public void attach(T mView) {
+    public void attach(V mView) {
         this.mView = mView;
     }
 
@@ -25,6 +25,9 @@ public class BasePresenter<T extends IBaseView> {
         }
     }
 
+    protected V getView() {
+        return mView;
+    }
 
     public void addDisposable(Disposable d) {
         if (this.mCompositeDisposable == null) {
