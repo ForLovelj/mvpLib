@@ -9,11 +9,13 @@
     <color name="theme_black_7f">#8f000000</color>
     <color name="transparent">#00000000</color>
 
-    <color name="main_color">#e02128</color>
+    <color name="main_color">#2E8F83</color>
 
     <color name="trans">#00000000</color>
     <color name="white">#ffffff</color>
     <color name="black_50">#80000000</color>
 
     <color name="text_system">#8A000000</color>
+    <color name="text_9b9b9b">#9b9b9b</color>
+    <color name="text_999999">#999999</color>
 </resources>

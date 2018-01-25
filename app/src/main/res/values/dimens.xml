@@ -48,6 +48,7 @@
     <dimen name="dp_120">120dp</dimen>
     <dimen name="sp_18">18sp</dimen>
     <dimen name="sp_15">15sp</dimen>
+    <dimen name="dp_300">300dp</dimen>
     <dimen name="dp_390">390dp</dimen>
     <dimen name="dp_330">330dp</dimen>
     <dimen name="dp_positive_10">-10dp</dimen>

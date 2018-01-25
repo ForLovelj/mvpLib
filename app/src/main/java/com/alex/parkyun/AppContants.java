@@ -13,4 +13,13 @@ public interface AppContants {
     int    WRITE_TIME_OUT   = 15;
     int    READ_TIME_OUT    = 15;
     String APP_TAG          = "ParkYun";
+    int LOGIN_INTERCEPTOR = 401;//通过ARouter拦截登录常量
+
+
+    interface ARouterUrl{
+
+        String SPLASH_ACTIVITY = "/foundation/splash";
+        String MAIN_ACTIVITY = "/foundation/main";
+        String LOGIN_ACTIVITY = "/foundation/login";
+    }
 }

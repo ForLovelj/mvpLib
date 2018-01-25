@@ -2,47 +2,81 @@ package com.alex.parkyun.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import com.alex.parkyun.AppContants;
 import com.alex.parkyun.R;
+import com.alex.parkyun.adapter.MyFragmentPagerAdapter;
 import com.alex.parkyun.base.BaseActivity;
 import com.alex.parkyun.bean.HomeBean;
 import com.alex.parkyun.presenter.MainPresenter;
 import com.alex.parkyun.presenter.viewImpl.IMainView;
-import com.alex.parkyun.utils.SnackbarUtil;
-import com.alex.parkyun.utils.TimeUtils;
-import com.alex.parkyun.utils.ToastUtils;
+import com.alex.parkyun.ui.fragment.HomeFragment;
+import com.alex.parkyun.ui.fragment.MineFragment;
+import com.alex.parkyun.ui.fragment.NearbyFragment;
+import com.alex.parkyun.view.NonSwipeViewPager;
+import com.alibaba.android.arouter.facade.annotation.Route;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity<MainPresenter,IMainView> implements IMainView{
+@Route(path = AppContants.ARouterUrl.MAIN_ACTIVITY, extras = AppContants.LOGIN_INTERCEPTOR)
+public class MainActivity extends BaseActivity<MainPresenter, IMainView> implements IMainView {
 
-    @BindView(R.id.content)
-    Button         mContent;
-    @BindView(R.id.loading)
-    Button         mLoading;
-    @BindView(R.id.error)
-    Button         mError;
-    @BindView(R.id.empty)
-    Button         mEmpty;
-    @BindView(R.id.zxing)
-    Button         mZxing;
-    @BindView(R.id.tv)
-    TextView       mTv;
-    @BindView(R.id.rl)
-    RelativeLayout mRl;
+
+    @BindView(R.id.noSwipeVp)
+    NonSwipeViewPager mNoSwipeVp;
+    @BindView(R.id.rb_home)
+    RadioButton       mRbHome;
+    @BindView(R.id.rb_nearby)
+    RadioButton       mRbNearby;
+    @BindView(R.id.rb_mine)
+    RadioButton       mRbMine;
+    @BindView(R.id.maintab_rg)
+    RadioGroup        mMaintabRg;
     @BindView(R.id.root)
-    LinearLayout   mRoot;
+    LinearLayout      mRoot;
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
 
+        initFragment();
+        initListener();
+
+    }
+
+    private void initListener() {
+        mMaintabRg.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.rb_home:
+                    mNoSwipeVp.setCurrentItem(0,false);
+                    break;
+                case R.id.rb_nearby:
+                    mNoSwipeVp.setCurrentItem(1,false);
+                    break;
+                case R.id.rb_mine:
+                    mNoSwipeVp.setCurrentItem(2,false);
+                    break;
+
+            }
+        });
+    }
+
+    private void initFragment() {
+
+        ArrayList<Fragment> fragments = new ArrayList<>();
+        fragments.add(new HomeFragment());
+        fragments.add(new NearbyFragment());
+        fragments.add(new MineFragment());
+
+        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(),fragments);
+        mNoSwipeVp.setAdapter(adapter);
+        mNoSwipeVp.setOffscreenPageLimit(3);//2n+1
     }
 
     @Override
@@ -56,47 +90,24 @@ public class MainActivity extends BaseActivity<MainPresenter,IMainView> implemen
     }
 
     @Override
-    protected MainPresenter getPresenter() {
+    protected MainPresenter initPresenter() {
         return new MainPresenter();
     }
 
     @Override
     protected void onRetryListener() {
 
-        ToastUtils.showToast("重新加载...");
-        mPresenter.getHomePageData();
     }
 
     @Override
     protected View getStatusTargetView() {
-        return mRl;
+        return null;
     }
 
-
-    @OnClick({R.id.content, R.id.loading, R.id.error, R.id.empty, R.id.zxing})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.content:
-                mPresenter.getHomePageData();
-                break;
-            case R.id.loading:
-                showLoadingView("哈哈");
-                mRoot.postDelayed(() -> dissmissLoadingView(), 2000);
-                break;
-            case R.id.error:
-                showErrorView();
-                break;
-            case R.id.empty:
-                showEmptyView();
-                break;
-            case R.id.zxing:
-                SnackbarUtil.IndefiniteSnackbar(mRoot, "hello world!  "+ TimeUtils.getFriendlyTimeSpanByNow(System.currentTimeMillis() - 1000*60*60*48), Snackbar.LENGTH_SHORT, SnackbarUtil.Info).show();
-                break;
-        }
-    }
 
     @Override
     public void onSuccess(HomeBean homeBean) {
-        mTv.setText(homeBean.toString());
+
     }
+
 }

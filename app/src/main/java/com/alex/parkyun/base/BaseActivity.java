@@ -39,7 +39,7 @@ public abstract class BaseActivity<T extends BasePresenter<V>,V extends BaseMvpV
         mActivity = this;
         setContentView(tellMeLayout());
 
-        mPresenter = getPresenter();
+        mPresenter = initPresenter();
         if (mPresenter != null) {
             mPresenter.attach((V) this);
         }
@@ -88,7 +88,14 @@ public abstract class BaseActivity<T extends BasePresenter<V>,V extends BaseMvpV
      */
     protected abstract int tellMeLayout();
 
-    protected abstract T getPresenter();
+    protected abstract T initPresenter();
+
+    protected T getPresenter() {
+        if (mPresenter == null) {
+            throw new RuntimeException("presenter cannot be initialized!");
+        }
+        return mPresenter;
+    }
 
 
     /**

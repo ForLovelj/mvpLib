@@ -46,7 +46,7 @@ public abstract class BaseFragment <T extends BasePresenter<V>,V extends BaseMvp
         View view = inflater.inflate(tellMeLayout(), container,false);
         mUnbinder = ButterKnife.bind(this,view);
 
-        mPresenter = getPresenter();
+        mPresenter = initPresenter();
         if (mPresenter != null) {
             mPresenter.attach((V) this);
         }
@@ -123,7 +123,14 @@ public abstract class BaseFragment <T extends BasePresenter<V>,V extends BaseMvp
      */
     protected abstract int tellMeLayout();
 
-    protected abstract T getPresenter();
+    protected abstract T initPresenter();
+
+    protected T getPresenter() {
+        if (mPresenter == null) {
+            throw new RuntimeException("presenter cannot be initialized!");
+        }
+        return mPresenter;
+    }
 
 
     /**
