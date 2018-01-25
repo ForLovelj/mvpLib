@@ -1,7 +1,9 @@
 package com.alex.parkyun.ui.activity;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
@@ -13,8 +15,11 @@ import com.alex.parkyun.R;
 import com.alex.parkyun.base.BaseActivity;
 import com.alex.parkyun.presenter.LoginPresenter;
 import com.alex.parkyun.presenter.viewImpl.ILoginView;
+import com.alex.parkyun.runtimepermission.PermissionsManager;
+import com.alex.parkyun.runtimepermission.PermissionsResultAction;
 import com.alex.parkyun.utils.StatusBarUtil;
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,6 +50,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter, ILoginView> impl
     protected void init(@Nullable Bundle savedInstanceState) {
 
         StatusBarUtil.setTranslucentForImageView(this, Color.TRANSPARENT, null);
+        requestPermissions();
     }
 
     @Override
@@ -82,5 +88,27 @@ public class LoginActivity extends BaseActivity<LoginPresenter, ILoginView> impl
             case R.id.tv_forget:
                 break;
         }
+    }
+
+    @TargetApi(23)
+    private void requestPermissions() {
+        PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
+            @Override
+            public void onGranted() {
+                //				Toast.makeText(MainActivity.this, "All permissions have been granted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDenied(String permission) {
+                Logger.d("permission: "+permission);
+                //                Toast.makeText(MainActivity.this, "Permission " + permission + " has been denied", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
     }
 }
