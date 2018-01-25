@@ -749,7 +749,7 @@ public class TimeUtils {
      * <li>如果在 1 小时内，显示 XXX分钟前</li>
      * <li>如果在 1 小时外的今天内，显示今天15:32</li>
      * <li>如果是昨天的，显示昨天15:32</li>
-     * <li>其余显示，2016-10-15</li>
+     * <li>其余显示，2016-10-15 12:05:30</li>
      * <li>时间不合法的情况全部日期和时间信息，如星期六 十月 27 14:21:20 CST 2007</li>
      * </ul>
      */
@@ -758,7 +758,7 @@ public class TimeUtils {
         long span = now - millis;
         if (span < 0)
             // U can read http://www.apihome.cn/api/java/Formatter.html to understand it.
-            return String.format("%tc", millis);
+            return String.format("%tF %tT", millis,millis);
         if (span < 1000) {
             return "刚刚";
         } else if (span < TimeConstants.MIN) {
@@ -773,7 +773,7 @@ public class TimeUtils {
         } else if (millis >= wee - TimeConstants.DAY) {
             return String.format("昨天%tR", millis);
         } else {
-            return String.format("%tF", millis);
+            return String.format("%tF %tT", millis,millis);
         }
     }
 

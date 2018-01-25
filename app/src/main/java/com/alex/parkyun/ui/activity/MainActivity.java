@@ -15,6 +15,7 @@ import com.alex.parkyun.bean.HomeBean;
 import com.alex.parkyun.presenter.MainPresenter;
 import com.alex.parkyun.presenter.viewImpl.IMainView;
 import com.alex.parkyun.utils.SnackbarUtil;
+import com.alex.parkyun.utils.TimeUtils;
 import com.alex.parkyun.utils.ToastUtils;
 
 import butterknife.BindView;
@@ -89,7 +90,7 @@ public class MainActivity extends BaseActivity<MainPresenter,IMainView> implemen
                 showEmptyView();
                 break;
             case R.id.zxing:
-                SnackbarUtil.IndefiniteSnackbar(mRoot, "hello world!", Snackbar.LENGTH_SHORT, SnackbarUtil.Info).show();
+                SnackbarUtil.IndefiniteSnackbar(mRoot, "hello world!  "+ TimeUtils.getFriendlyTimeSpanByNow(System.currentTimeMillis() - 1000*60*60*48), Snackbar.LENGTH_SHORT, SnackbarUtil.Info).show();
                 break;
         }
     }
