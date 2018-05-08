@@ -26,7 +26,7 @@
         <item name="android:windowExitAnimation">@anim/dialog_bottom_out</item>
     </style>
 
-    <style name="BottomDialog" parent="style/DialogStyle">
+    <style name="BottomDialog" parent="DialogStyle">
         <item name="android:gravity">bottom</item>
         <item name="android:windowAnimationStyle">@style/ActionSheetDialogAnimation</item>
     </style>

@@ -3,10 +3,13 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.jakewharton:butterknife-gradle-plugin:8.8.1'
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        //Android Studio3.0与butterknife的冲突，github上面已经有了这个问题issue，JakeWharton大神也给了相关解释，暂时的解决方法是降至8.4的版本。
+//        classpath 'com.jakewharton:butterknife-gradle-plugin:8.8.1'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         classpath 'me.tatarka:gradle-retrolambda:3.7.0'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -19,6 +22,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         mavenCentral()
+        google()
     }
 }
 
